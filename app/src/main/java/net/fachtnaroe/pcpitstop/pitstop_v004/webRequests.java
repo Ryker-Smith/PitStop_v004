@@ -99,7 +99,7 @@ public class webRequests extends Form implements HandlesEventDispatching {
         firstLabel.WidthPercent(20);
         firstBox = new TextBox(firstHoriz);
         firstBox.WidthPercent(100);
-        firstBox.Text("Frank");
+        firstBox.Text("");
 
         HorizontalArrangement familyHoriz = new HorizontalArrangement(screenContainer);
         familyHoriz.WidthPercent(100);
@@ -108,7 +108,7 @@ public class webRequests extends Form implements HandlesEventDispatching {
         familyLabel.WidthPercent(20);
         familyBox = new TextBox(familyHoriz);
         familyBox.WidthPercent(100);
-        familyBox.Text("Frankinson");
+        familyBox.Text("");
 
         HorizontalArrangement emailHoriz = new HorizontalArrangement(screenContainer);
         emailHoriz.WidthPercent(100);
@@ -128,7 +128,7 @@ public class webRequests extends Form implements HandlesEventDispatching {
         phoneLabel.WidthPercent(20);
         phoneBox = new TextBox(phoneHoriz);
         phoneBox.WidthPercent(100);
-        phoneBox.Text("1234567");
+        phoneBox.Text("");
 
         HorizontalArrangement address1Horiz = new HorizontalArrangement(screenContainer);
         address1Horiz.WidthPercent(100);
@@ -137,7 +137,7 @@ public class webRequests extends Form implements HandlesEventDispatching {
         address1Label.WidthPercent(20);
         address1Box = new TextBox(address1Horiz);
         address1Box.WidthPercent(100);
-        address1Box.Text("1 Main Street");
+        address1Box.Text("");
 
         HorizontalArrangement address2Horiz = new HorizontalArrangement(screenContainer);
         address2Horiz.WidthPercent(100);
@@ -146,7 +146,7 @@ public class webRequests extends Form implements HandlesEventDispatching {
         address2Label.WidthPercent(20);
         address2Box = new TextBox(address2Horiz);
         address2Box.WidthPercent(100);
-        address2Box.Text("Clogheen");
+        address2Box.Text("");
 
         HorizontalArrangement address3Horiz = new HorizontalArrangement(screenContainer);
         address3Horiz.WidthPercent(100);
@@ -155,7 +155,7 @@ public class webRequests extends Form implements HandlesEventDispatching {
         address3Label.WidthPercent(20);
         address3Box = new TextBox(address3Horiz);
         address3Box.WidthPercent(100);
-        address3Box.Text("Co. Tipperary");
+        address3Box.Text("");
 
         HorizontalArrangement ppsHoriz = new HorizontalArrangement(screenContainer);
         ppsHoriz.WidthPercent(100);
