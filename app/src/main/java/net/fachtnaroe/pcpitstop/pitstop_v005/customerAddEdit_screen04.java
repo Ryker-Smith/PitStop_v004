@@ -1,4 +1,4 @@
-package net.fachtnaroe.pcpitstop.pitstop_v004;
+package net.fachtnaroe.pcpitstop.pitstop_v005;
 // http://thunkableblocks.blogspot.ie/2017/07/java-code-snippets-for-app-inventor.html
 //https://github.com/AppScale/sample-apps/blob/master/java/appinventor2/appinventor/components/tests/com/google/appinventor/components/runtime/WebTest.java
 
@@ -9,13 +9,13 @@ import com.google.appinventor.components.runtime.Form;
 import com.google.appinventor.components.runtime.HandlesEventDispatching;
 import com.google.appinventor.components.runtime.HorizontalArrangement;
 import com.google.appinventor.components.runtime.Label;
+import com.google.appinventor.components.runtime.Notifier;
 import com.google.appinventor.components.runtime.TextBox;
 import com.google.appinventor.components.runtime.VerticalScrollArrangement;
 import com.google.appinventor.components.runtime.Web;
 
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.*;
 
 //import static com.google.appinventor.components.runtime.util.YailList.makeList;
 
@@ -23,7 +23,7 @@ import org.json.JSONObject;
  * Created by fachtna on 06/03/18.
  */
 
-public class webRequests extends Form implements HandlesEventDispatching {
+public class customerAddEdit_screen04 extends Form implements HandlesEventDispatching {
 
     private Button connectionButton, postButton, putButton, deleteButton, getButton;
     private Label firstLabel, familyLabel, emailLabel, phoneLabel, responseLabel, ppsLabel, urlLabel, debugSideLabel;
@@ -32,13 +32,14 @@ public class webRequests extends Form implements HandlesEventDispatching {
     private HorizontalArrangement topLine, nextLine, ppsLine;
     public static TextBox firstBox, familyBox, emailBox, phoneBox, urlBox, outputBox, ppsBox, debugLabel;
     private Label address1Label, address2Label, address3Label;
-    private TextBox address1Box, address2Box, address3Box;
-    private static String remoteHost = "https://fachtnaroe.net";
-    private static String remoteApp = "/pcpitstop-2018?";
-    public static String targetURL = remoteHost + remoteApp;
+    public static TextBox address1Box, address2Box, address3Box, pidBox;
+    private static String remoteHost = "";
+    public static String targetURL = "https://fachtnaroe.net/pcpitstop-2018?";
+//    public static String targetURL = remoteHost + remoteApp;
 
+    private int currentCustomer = -1;
 
-    public webRequests() {
+    public customerAddEdit_screen04() {
     // Constructor
     }
 
@@ -78,19 +79,33 @@ public class webRequests extends Form implements HandlesEventDispatching {
         topLine = new HorizontalArrangement(screenContainer);
         topLine.WidthPercent(100);
         Label titleLabel = new Label(topLine);
-        titleLabel.Text("Add a person");
+        titleLabel.Text("Add/edit Customer");
         titleLabel.FontSize(20);
         titleLabel.FontTypeface(Component.TYPEFACE_SERIF);
         titleLabel.WidthPercent(100);
         titleLabel.FontBold(true);
         titleLabel.TextAlignment(Component.ALIGNMENT_CENTER);
 
-        HorizontalArrangement urlHorz = new HorizontalArrangement(screenContainer);
-        urlLabel = new Label(urlHorz);
-        urlLabel.Text("Backend:");
-        urlBox = new TextBox(urlHorz);
-        urlBox.WidthPercent(100);
-        urlBox.Text(remoteHost + remoteApp);
+        HorizontalArrangement pidHoriz = new HorizontalArrangement(screenContainer);
+
+        Label pidLabel = new Label(pidHoriz);
+        pidLabel.Text("pID:");
+        pidLabel.FontBold(true);
+        pidBox = new TextBox(pidHoriz);
+        pidBox.WidthPercent(15);
+        pidBox.Text("64");
+        pidBox.WidthPercent(25);
+        getButton = new Button(pidHoriz);
+        getButton.Text("Get existing customer");
+        getButton.WidthPercent(60);
+        getButton.Enabled(true);
+
+//        HorizontalArrangement urlHorz = new HorizontalArrangement(screenContainer);
+//        urlLabel = new Label(urlHorz);
+//        urlLabel.Text("Backend:");
+//        urlBox = new TextBox(urlHorz);
+//        urlBox.WidthPercent(100);
+//        urlBox.Text(targetURL);
 
         HorizontalArrangement firstHoriz = new HorizontalArrangement(screenContainer);
         firstHoriz.WidthPercent(100);
@@ -176,33 +191,24 @@ public class webRequests extends Form implements HandlesEventDispatching {
 
         HorizontalArrangement uploadHoriz = new HorizontalArrangement(screenContainer);
         uploadHoriz.WidthPercent(100);
+        uploadHoriz.AlignHorizontal(1);
         postButton = new Button(uploadHoriz);
-        postButton.Text("POST");
+        postButton.Text("Save");
         postButton.WidthPercent(50);
 
-        putButton = new Button(uploadHoriz);
-        putButton.Text("PUT");
-        putButton.WidthPercent(50);
-        putButton.Enabled(false);
-
-        HorizontalArrangement getHoriz = new HorizontalArrangement(screenContainer);
-        getHoriz.WidthPercent(100);
-        deleteButton = new Button(getHoriz);
-        deleteButton.Text("DELETE");
-        deleteButton.WidthPercent(50);
-        deleteButton.Enabled(false);
-
-        getButton = new Button(getHoriz);
-        getButton.Text("GET");
-        getButton.WidthPercent(50);
-        getButton.Enabled(false);
-
-//        connectionButton = new Button(screenContainer);
-//        connectionButton.Text("Connect");
+//        putButton = new Button(uploadHoriz);
+//        putButton.Text("PUT");
+//        putButton.WidthPercent(50);
+//        putButton.Enabled(false);
 //
-//        connectionButton.BackgroundColor(COLOR_LTGRAY);
-//        connectionButton.WidthPercent(50);
-//        connectionButton.TextAlignment(Component.ALIGNMENT_CENTER);
+//        HorizontalArrangement getHoriz = new HorizontalArrangement(screenContainer);
+//        getHoriz.WidthPercent(100);
+//        deleteButton = new Button(getHoriz);
+//        deleteButton.Text("DELETE");
+//        deleteButton.WidthPercent(50);
+//        deleteButton.Enabled(false);
+
+
 
         webComponent_POST = new Web(screenContainer);
         webComponent_PUT = new Web(screenContainer);
@@ -213,28 +219,18 @@ public class webRequests extends Form implements HandlesEventDispatching {
         EventDispatcher.registerEventForDelegation(this, "postButton", "Click");
 //        EventDispatcher.registerEventForDelegation(this, "putButton", "Click");
 //        EventDispatcher.registerEventForDelegation(this, "deleteButton", "Click");
-//        EventDispatcher.registerEventForDelegation(this, "getButton", "Click");
+        EventDispatcher.registerEventForDelegation(this, "getButton", "Click");
         EventDispatcher.registerEventForDelegation(this, "webComponent_POST", "GotText");
     }
 
-
-
     public boolean dispatchEvent(Component component, String componentName, String eventName, Object[] params) {
-        if (component.equals(connectionButton) && eventName.equals("Click")) {
-            return true;
-        }
-        else if (component.equals(webComponent_POST) && eventName.equals("GotText")) {
-            String result = (String) params[3];
-            youveGotText(result);
-            return true;
-        }
-        else if (component.equals(postButton) && eventName.equals("Click")) {
+        if (component.equals(postButton) && eventName.equals("Click")) {
             targetURL = urlBox.Text();
             debugLabel.Text(targetURL);
-            postButton.Text("sending");
+            postButton.Text("Saving");
             webComponent_POST.Url(targetURL);
             person myPerson = new person();
-
+            EventDispatcher.registerEventForDelegation(this, "webComponent_POST", "GotText");
             myPerson.Set(new String[]{
                     firstBox.Text(),
                     familyBox.Text(),
@@ -245,10 +241,31 @@ public class webRequests extends Form implements HandlesEventDispatching {
                     address3Box.Text(),
                     ppsBox.Text() }
             );
-            boolean savedOK=myPerson.Save ();
-//            String textToPost = myPerson.MakeRequestString();
-//            webComponent_POST.PostText(textToPost);
-//            debugLabel.Text(textToPost);
+            boolean savedOK=myPerson.Save (webComponent_POST);
+            return true;
+        }
+        else if (component.equals(webComponent_POST) && eventName.equals("GotText")) {
+            String result = (String) params[3];
+            String message;
+            Notifier myNotify = new Notifier(this);
+            try {
+                JSONObject parser = new JSONObject(result);
+                String status= parser.getString("Status");
+                if (status.equals("OK")) {
+                    postButton.Text("Saved");
+                    currentCustomer = Integer.valueOf(parser.getString("pID"));
+                    message = "Added customer with pID " + parser.getString("pID");
+                    myNotify.ShowMessageDialog(message, "Add/edit Customer", "OK");
+                }
+                else {
+                    message = "Something went wrong";
+                    postButton.Text("Not saved");
+                    myNotify.ShowMessageDialog(message, "Add/edit Customer", "OK");
+                }
+
+            } catch (JSONException e) {
+            // if an exception occurs, code for it in here
+            }
             return true;
         }
         else if (component.equals(putButton) && eventName.equals("Click")) {
@@ -258,9 +275,61 @@ public class webRequests extends Form implements HandlesEventDispatching {
             return true;
         }
         else if (component.equals(getButton) && eventName.equals("Click")) {
-            getButtonClick();
+            person myPerson = new person();
+            EventDispatcher.registerEventForDelegation(this, "webComponent_GET", "GotText");
+            myPerson.pID=Integer.valueOf(pidBox.Text() );
+            myPerson.Load(webComponent_GET, myPerson.pID);
             return true;
         }
+        else if (component.equals(webComponent_GET) && eventName.equals("GotText")) {
+            String result = (String) params[3];
+            String message;
+            person myPerson = new person();
+            Notifier myNotify = new Notifier(this);
+            try {
+                // use
+                JSONObject myJSONparser = new JSONObject(result);
+                JSONArray data= myJSONparser.getJSONArray("person");
+                // the same pID?
+                if (0 == data.getJSONObject(0).getString("pID").compareTo(pidBox.Text())) {
+                    myPerson.Get(data.getJSONObject(0));
+                }
+//
+//                if (0 == data.getJSONObject(0).getString("pID").compareTo(pidBox.Text())) {
+//                    firstBox.Text(data.getJSONObject(0).getString("First"));
+//                    familyBox.Text(data.getJSONObject(0).getString("Family"));
+//                    phoneBox.Text(data.getJSONObject(0).getString("Phone"));
+//                    emailBox.Text(data.getJSONObject(0).getString("Email"));
+//                    address1Box.Text(data.getJSONObject(0).getString("Address1"));
+//                    address2Box.Text(data.getJSONObject(0).getString("Address2"));
+//                    address3Box.Text(data.getJSONObject(0).getString("Address3"));
+//                    ppsBox.Text(data.getJSONObject(0).getString("PPS"));
+//                    pidBox.Enabled(false);
+//                }
+                else {
+                    message = "Person records don't match. Try again.";
+                    myNotify.ShowMessageDialog(message, "Add/edit Customer", "OK");
+                    debugLabel.Text("Error");
+                }
+
+            } catch (JSONException e) {
+                // if an exception occurs, code for it in here
+                message = "Unable to retrieve that record. Is the pID number right?";
+                myNotify.ShowMessageDialog(message, "Add/edit Customer", "OK");
+            }
+            return true;
+        }
+        else if (component.equals(connectionButton) && eventName.equals("Click")) {
+            return true;
+        }
+//        else if (component.equals(myPerson.webComponent) && eventName.equals("GotText")) {
+//            String result = (String) params[3];
+//            customerAddEdit_screen04.firstBox.Text("returned");
+//            customerAddEdit_screen04.familyBox.Text(result);
+//            Notifier myNotify = new Notifier(screenContainer);
+//            myNotify.ShowMessageDialog(result, "Advisory", "OK");
+//            return true;
+//        }
         else {
         }
 
@@ -278,16 +347,16 @@ public class webRequests extends Form implements HandlesEventDispatching {
     public void youveGotText(String result) {
         postButton.Text("Got data");
         debugLabel.Text(result);
-        try {
-            JSONObject parser = new JSONObject(result);
-            debugLabel.Text(result);
-//                    parser.getString("result") + " (" +
-//                            parser.getString("sessionID") + ")"
-//            );
-
-        } catch (JSONException e) {
-            // if an exception occurs, code for it in here
-        }
+//        try {
+//            JSONObject parser = new JSONObject(result);
+//            debugLabel.Text(result);
+////                    parser.getString("result") + " (" +
+////                            parser.getString("sessionID") + ")"
+////            );
+//
+//        } catch (JSONException e) {
+//            // if an exception occurs, code for it in here
+//        }
     }
 
 }
