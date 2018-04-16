@@ -244,7 +244,6 @@ public class operatorHome_screen02 extends Form implements HandlesEventDispatchi
     }
 
     void jobEditButtonClick() {
-
     }
 
     void gotCustomers(String result) {
