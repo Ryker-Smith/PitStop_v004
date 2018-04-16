@@ -9,7 +9,7 @@ public class PPSN {
 
     public PPSN() {
         // Constructor
-        Number = new String("1234567T");
+        Number = new String("");
     }
 
     public String Get() {

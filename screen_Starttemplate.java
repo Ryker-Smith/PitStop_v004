@@ -18,7 +18,7 @@ import com.google.appinventor.components.runtime.Web;
 
 import org.json.*;
 
-public class administratorHome_screen09 extends Form implements HandlesEventDispatching {
+public class operatorHome_screen2 extends Form implements HandlesEventDispatching {
 
     private Button aButton;
     private Label aLabel;
@@ -29,7 +29,7 @@ public class administratorHome_screen09 extends Form implements HandlesEventDisp
     public static String targetURL = "https://fachtnaroe.net/pcpitstop-2018?";
 //    public static String targetURL = remoteHost + remoteApp;
 
-    public void administratorHome_screen09 () {
+    public void operatorHome_screen2_() {
         // Constructor
     }
 
@@ -41,4 +41,4 @@ public class administratorHome_screen09 extends Form implements HandlesEventDisp
 
     }
 
-}
+} 

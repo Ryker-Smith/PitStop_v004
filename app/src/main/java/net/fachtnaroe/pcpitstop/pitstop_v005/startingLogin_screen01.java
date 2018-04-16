@@ -18,9 +18,11 @@ import com.google.appinventor.components.runtime.TinyDB;
 import com.google.appinventor.components.runtime.VerticalArrangement;
 import com.google.appinventor.components.runtime.VerticalScrollArrangement;
 import com.google.appinventor.components.runtime.Web;
+//import com.google.appinventor.components.runtime.util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+//import gnu.lists.FString;
 
 public class startingLogin_screen01 extends Form implements HandlesEventDispatching {
 
@@ -33,7 +35,7 @@ public class startingLogin_screen01 extends Form implements HandlesEventDispatch
     private String targetURL = "https://fachtnaroe.net/pcpitstop-2018?iam=fachtna&";
     private Image myLogo;
     private Notifier myNotify;
-    private TinyDB myFile;
+    private TinyDB localDB;
     private String sessionID;
 
     protected void $define() {
@@ -41,7 +43,7 @@ public class startingLogin_screen01 extends Form implements HandlesEventDispatch
         screenContainer = new VerticalScrollArrangement(this);
         screenContainer.WidthPercent(100);
         screenContainer.HeightPercent(100);
-        myFile = new TinyDB(screenContainer);
+        localDB = new TinyDB(this);
         myNotify = new Notifier(screenContainer);
 
         userLine = new HorizontalArrangement(screenContainer);
@@ -182,8 +184,8 @@ public class startingLogin_screen01 extends Form implements HandlesEventDispatch
             );
             if (parser.getString("Status").equals("OK")) {
                 sessionID= parser.getString("sessionID");
-//                myFile.StoreValue("sessionID", sessionID);
-                myFile.StoreValue((String) "sessionID", (Object) sessionID);
+//                localDB.StoreValue("sessionID", sessionID);
+//                localDB.StoreValue((String) "sessionID", (Object) sessionID);
                 Intent intent = new Intent(this, operatorHome_screen02.class);
                 Bundle b = new Bundle();
                 b.putString("sessionID", sessionID); //Your id

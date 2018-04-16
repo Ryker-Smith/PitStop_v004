@@ -2,6 +2,8 @@ package net.fachtnaroe.pcpitstop.pitstop_v005;
 // http://thunkableblocks.blogspot.ie/2017/07/java-code-snippets-for-app-inventor.html
 //https://github.com/AppScale/sample-apps/blob/master/java/appinventor2/appinventor/components/tests/com/google/appinventor/components/runtime/WebTest.java
 
+import android.os.Bundle;
+
 import com.google.appinventor.components.runtime.Button;
 import com.google.appinventor.components.runtime.Component;
 import com.google.appinventor.components.runtime.EventDispatcher;
@@ -30,14 +32,16 @@ public class customerAddEdit_screen04 extends Form implements HandlesEventDispat
     public Web webComponent_POST, webComponent_PUT, webComponent_GET, webComponent_DELETE;
     public static VerticalScrollArrangement screenContainer;
     private HorizontalArrangement topLine, nextLine, ppsLine;
-    public static TextBox firstBox, familyBox, emailBox, phoneBox, urlBox, outputBox, ppsBox, debugLabel;
+    public static TextBox firstBox, familyBox, emailBox, phoneBox,  outputBox, ppsBox, debugLabel;
     private Label address1Label, address2Label, address3Label;
     public static TextBox address1Box, address2Box, address3Box, pidBox;
     private static String remoteHost = "";
-    public static String targetURL = "https://fachtnaroe.net/pcpitstop-2018?";
+    public static String targetURL = "https://fachtnaroe.net/pcpitstop-2018?iam=fachtna&";
+    private String sessionID;
+    private int pID=-1;
 //    public static String targetURL = remoteHost + remoteApp;
 
-    private int currentCustomer = -1;
+//    private int currentCustomer = -1;
 
     public customerAddEdit_screen04() {
     // Constructor
@@ -86,6 +90,12 @@ public class customerAddEdit_screen04 extends Form implements HandlesEventDispat
         titleLabel.FontBold(true);
         titleLabel.TextAlignment(Component.ALIGNMENT_CENTER);
 
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            sessionID = b.getString("sessionID");
+            pID=b.getInt("pID");
+        }
+
         HorizontalArrangement pidHoriz = new HorizontalArrangement(screenContainer);
 
         Label pidLabel = new Label(pidHoriz);
@@ -93,19 +103,14 @@ public class customerAddEdit_screen04 extends Form implements HandlesEventDispat
         pidLabel.FontBold(true);
         pidBox = new TextBox(pidHoriz);
         pidBox.WidthPercent(15);
-        pidBox.Text("64");
+        if (pID != -1) {
+            pidBox.Text(Integer.toString(pID));
+        }
         pidBox.WidthPercent(25);
         getButton = new Button(pidHoriz);
         getButton.Text("Get existing customer");
         getButton.WidthPercent(60);
         getButton.Enabled(true);
-
-//        HorizontalArrangement urlHorz = new HorizontalArrangement(screenContainer);
-//        urlLabel = new Label(urlHorz);
-//        urlLabel.Text("Backend:");
-//        urlBox = new TextBox(urlHorz);
-//        urlBox.WidthPercent(100);
-//        urlBox.Text(targetURL);
 
         HorizontalArrangement firstHoriz = new HorizontalArrangement(screenContainer);
         firstHoriz.WidthPercent(100);
@@ -196,20 +201,6 @@ public class customerAddEdit_screen04 extends Form implements HandlesEventDispat
         postButton.Text("Save");
         postButton.WidthPercent(50);
 
-//        putButton = new Button(uploadHoriz);
-//        putButton.Text("PUT");
-//        putButton.WidthPercent(50);
-//        putButton.Enabled(false);
-//
-//        HorizontalArrangement getHoriz = new HorizontalArrangement(screenContainer);
-//        getHoriz.WidthPercent(100);
-//        deleteButton = new Button(getHoriz);
-//        deleteButton.Text("DELETE");
-//        deleteButton.WidthPercent(50);
-//        deleteButton.Enabled(false);
-
-
-
         webComponent_POST = new Web(screenContainer);
         webComponent_PUT = new Web(screenContainer);
         webComponent_GET = new Web(screenContainer);
@@ -221,11 +212,25 @@ public class customerAddEdit_screen04 extends Form implements HandlesEventDispat
 //        EventDispatcher.registerEventForDelegation(this, "deleteButton", "Click");
         EventDispatcher.registerEventForDelegation(this, "getButton", "Click");
         EventDispatcher.registerEventForDelegation(this, "webComponent_POST", "GotText");
+        if (pID != -1) {
+
+//            debugLabel.Text("Clicked");
+            this.getButtonClick();
+//            closeForm(null);
+//            finishAndRemoveTask();
+        }
+    }
+
+//    @Override
+    public void onBackPressed() {
+        closeForm(null);
+        finishAndRemoveTask();
+        return;
     }
 
     public boolean dispatchEvent(Component component, String componentName, String eventName, Object[] params) {
         if (component.equals(postButton) && eventName.equals("Click")) {
-            targetURL = urlBox.Text();
+//            targetURL = urlBox.Text();
             debugLabel.Text(targetURL);
             postButton.Text("Saving");
             webComponent_POST.Url(targetURL);
@@ -253,7 +258,7 @@ public class customerAddEdit_screen04 extends Form implements HandlesEventDispat
                 String status= parser.getString("Status");
                 if (status.equals("OK")) {
                     postButton.Text("Saved");
-                    currentCustomer = Integer.valueOf(parser.getString("pID"));
+                    pID = Integer.valueOf(parser.getString("pID"));
                     message = "Added customer with pID " + parser.getString("pID");
                     myNotify.ShowMessageDialog(message, "Add/edit Customer", "OK");
                 }
@@ -275,15 +280,13 @@ public class customerAddEdit_screen04 extends Form implements HandlesEventDispat
             return true;
         }
         else if (component.equals(getButton) && eventName.equals("Click")) {
-            person myPerson = new person();
-            EventDispatcher.registerEventForDelegation(this, "webComponent_GET", "GotText");
-            myPerson.pID=Integer.valueOf(pidBox.Text() );
-            myPerson.Load(webComponent_GET, myPerson.pID);
+            getButtonClick();
             return true;
         }
         else if (component.equals(webComponent_GET) && eventName.equals("GotText")) {
             String result = (String) params[3];
             String message;
+            debugLabel.Text("Got Text");
             person myPerson = new person();
             Notifier myNotify = new Notifier(this);
             try {
@@ -293,19 +296,8 @@ public class customerAddEdit_screen04 extends Form implements HandlesEventDispat
                 // the same pID?
                 if (0 == data.getJSONObject(0).getString("pID").compareTo(pidBox.Text())) {
                     myPerson.Get(data.getJSONObject(0));
+                    debugLabel.Text("pIDs match");
                 }
-//
-//                if (0 == data.getJSONObject(0).getString("pID").compareTo(pidBox.Text())) {
-//                    firstBox.Text(data.getJSONObject(0).getString("First"));
-//                    familyBox.Text(data.getJSONObject(0).getString("Family"));
-//                    phoneBox.Text(data.getJSONObject(0).getString("Phone"));
-//                    emailBox.Text(data.getJSONObject(0).getString("Email"));
-//                    address1Box.Text(data.getJSONObject(0).getString("Address1"));
-//                    address2Box.Text(data.getJSONObject(0).getString("Address2"));
-//                    address3Box.Text(data.getJSONObject(0).getString("Address3"));
-//                    ppsBox.Text(data.getJSONObject(0).getString("PPS"));
-//                    pidBox.Enabled(false);
-//                }
                 else {
                     message = "Person records don't match. Try again.";
                     myNotify.ShowMessageDialog(message, "Add/edit Customer", "OK");
@@ -322,14 +314,6 @@ public class customerAddEdit_screen04 extends Form implements HandlesEventDispat
         else if (component.equals(connectionButton) && eventName.equals("Click")) {
             return true;
         }
-//        else if (component.equals(myPerson.webComponent) && eventName.equals("GotText")) {
-//            String result = (String) params[3];
-//            customerAddEdit_screen04.firstBox.Text("returned");
-//            customerAddEdit_screen04.familyBox.Text(result);
-//            Notifier myNotify = new Notifier(screenContainer);
-//            myNotify.ShowMessageDialog(result, "Advisory", "OK");
-//            return true;
-//        }
         else {
         }
 
@@ -338,25 +322,12 @@ public class customerAddEdit_screen04 extends Form implements HandlesEventDispat
     }
 
     public void getButtonClick() {
-
-//        targetURL = urlBox.Text();
-//        webComponent_POST.Url(targetURL);
-//        webComponent_POST.Get();
+        debugLabel.Text("Sending");
+        person myPerson = new person();
+        EventDispatcher.registerEventForDelegation(this, "webComponent_GET", "GotText");
+        myPerson.pID=Integer.valueOf(pidBox.Text() );
+        myPerson.Load(webComponent_GET, myPerson.pID);
     }
 
-    public void youveGotText(String result) {
-        postButton.Text("Got data");
-        debugLabel.Text(result);
-//        try {
-//            JSONObject parser = new JSONObject(result);
-//            debugLabel.Text(result);
-////                    parser.getString("result") + " (" +
-////                            parser.getString("sessionID") + ")"
-////            );
-//
-//        } catch (JSONException e) {
-//            // if an exception occurs, code for it in here
-//        }
-    }
 
 }

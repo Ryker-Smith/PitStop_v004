@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.fachtnaroe.pcpitstop.pitstop_v004">
+    package="net.fachtnaroe.pcpitstop.pitstop_v005">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -10,16 +12,41 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v004.screenLogin">
+        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v005.startingLogin_screen01" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v004.webRequests"
-            android:label="screen_webRequests"
+        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v005.operatorHome_screen02"
+            android:label="screen_operatorHome"
             android:theme="@style/AppTheme"></activity>
+        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v005.jobAddEdit_screen03"
+            android:label="screen_jobAddEdit"
+            android:theme="@style/AppTheme"></activity>
+        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v005.customerAddEdit_screen04"
+            android:label="screen_customerAddEdit"
+            android:theme="@style/AppTheme"></activity>
+        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v005.technicianHome_screen05"
+            android:label="screen_technicianHome"
+            android:theme="@style/AppTheme"></activity>
+        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v005.actionAddEdit_screen06"
+            android:label="screen_actionAddEdit"
+            android:theme="@style/AppTheme"></activity>
+        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v005.customerHome_screen07"
+            android:label="screen_customerHome"
+            android:theme="@style/AppTheme"></activity>
+        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v005.settings_screen08"
+            android:label="screen_settings"
+            android:theme="@style/AppTheme"></activity>
+        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v005.administratorHome_screen09"
+            android:label="screen_administratorHome"
+            android:theme="@style/AppTheme"></activity>
+        <activity android:name="net.fachtnaroe.pcpitstop.pitstop_v005.userAddEdit_screen10"
+            android:label="screen_userAddEdit"
+            android:theme="@style/AppTheme"></activity>
+        <activity android:name="com.google.appinventor.components.runtime.ListPickerActivity"></activity>
+
     </application>
 
 </manifest>

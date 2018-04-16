@@ -29,7 +29,7 @@ public class technicianHome_screen05 extends Form implements HandlesEventDispatc
     public static String targetURL = "https://fachtnaroe.net/pcpitstop-2018?";
 //    public static String targetURL = remoteHost + remoteApp;
 
-    public void operatorHome_screen2_() {
+    public void technicianHome_screen05 () {
         // Constructor
     }
 

@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "net.fachtnaroe.pcpitstop.pitstop_v004"
+        applicationId "net.fachtnaroe.pcpitstop.pitstop_v005"
         minSdkVersion 23
         targetSdkVersion 26
         versionCode 1

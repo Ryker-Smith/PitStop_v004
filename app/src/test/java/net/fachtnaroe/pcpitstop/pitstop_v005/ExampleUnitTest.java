@@ -1,4 +1,4 @@
-package net.fachtnaroe.pcpitstop.pitstop_v004;
+package net.fachtnaroe.pcpitstop.pitstop_v005;
 
 import org.junit.Test;
 

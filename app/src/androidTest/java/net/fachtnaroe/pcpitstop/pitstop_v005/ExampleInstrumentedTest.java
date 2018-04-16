@@ -1,4 +1,4 @@
-package net.fachtnaroe.pcpitstop.pitstop_v004;
+package net.fachtnaroe.pcpitstop.pitstop_v005;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("net.fachtnaroe.pcpitstop.pitstop_v004", appContext.getPackageName());
+        assertEquals("net.fachtnaroe.pcpitstop.pitstop_v005", appContext.getPackageName());
     }
 }

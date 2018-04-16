@@ -1,11 +1,23 @@
 package net.fachtnaroe.pcpitstop.pitstop_v005;
 
+import android.support.annotation.NonNull;
+
 import com.google.appinventor.components.runtime.Form;
 import com.google.appinventor.components.runtime.HandlesEventDispatching;
+import com.google.appinventor.components.runtime.Notifier;
 import com.google.appinventor.components.runtime.Web;
+import com.google.appinventor.components.runtime.util.YailList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.ListIterator;
 
 import static net.fachtnaroe.pcpitstop.pitstop_v005.customerAddEdit_screen04.address1Box;
 import static net.fachtnaroe.pcpitstop.pitstop_v005.customerAddEdit_screen04.address2Box;
@@ -41,32 +53,6 @@ public class person extends Form implements HandlesEventDispatching{
         pID=-1; // if subsequently found to be different, use PUT not POST
     }
 
-    public person Load (Web webComponent, int pID) {
-        String textToPost =
-                customerAddEdit_screen04.RequestCombine(new String[]{
-                        customerAddEdit_screen04.RequestValue("sessionID","a1b2c3d4"),
-                        customerAddEdit_screen04.RequestValue("iam","fachtna"),
-                        customerAddEdit_screen04.RequestValue("entity","person"),
-                        customerAddEdit_screen04.RequestValue("pID",Integer.toString(pID))
-                });
-        webComponent.Url( customerAddEdit_screen04.targetURL +  textToPost );
-        customerAddEdit_screen04.debugLabel.Text(webComponent.Url());
-        webComponent.Get();
-        return null;
-    }
-
-    public boolean Save(Web webComponent){
-        String request = webComponent.Url() + "&" + MakeRequestString();
-        if (pID == -1) { // -1 means no active pID, should POST; else PUT
-            webComponent.PostText(request);
-        }
-        else {
-            webComponent.PutText(request);
-        }
-        return true;
-    }
-
-
     boolean Set (String[] details) {
         // SET means copy from screen to background record
         First = details[0];
@@ -78,6 +64,17 @@ public class person extends Form implements HandlesEventDispatching{
         Address3 = details[6];
         // not forcing a valid PPS at this point
         boolean result=pps.Set (details[7]);
+        return true;
+    }
+
+    public boolean Save(Web webComponent){
+        String request = webComponent.Url() + "&" + MakeRequestString();
+        if (pID == -1) { // -1 means no active pID, should POST; else PUT
+            webComponent.PostText(request);
+        }
+        else {
+            webComponent.PutText(request);
+        }
         return true;
     }
 
@@ -94,7 +91,7 @@ public class person extends Form implements HandlesEventDispatching{
             Address1= dataRcvd.getString("Address1");
             Address2= dataRcvd.getString("Address2");
             Address3= dataRcvd.getString("Address3");
-            pps.Set(dataRcvd.getString("pps"));
+//            pps.Set(dataRcvd.getString("pps"));
 
             firstBox.Text(First);
             familyBox.Text(Family);
@@ -105,12 +102,52 @@ public class person extends Form implements HandlesEventDispatching{
             address3Box.Text(Address3);
             ppsBox.Text(pps.Number);
 
-
         } catch (JSONException e) {
             // if an exception occurs, code for it in here
+
+
         }
 
     }
+
+    public person Load (Web webComponent, Integer pID) {
+        String textToPost =
+                customerAddEdit_screen04.RequestCombine(new String[]{
+                        customerAddEdit_screen04.RequestValue("sessionID","a1b2c3d4"),
+                        customerAddEdit_screen04.RequestValue("iam","fachtna"),
+                        customerAddEdit_screen04.RequestValue("entity","person")
+                });
+        if ((pID != null) && (pID != -1)) {
+            textToPost += "&" + customerAddEdit_screen04.RequestValue("pID",Integer.toString(pID));
+        }
+        webComponent.Url( customerAddEdit_screen04.targetURL +  textToPost );
+        customerAddEdit_screen04.debugLabel.Text(webComponent.Url());
+        webComponent.Get();
+        return null;
+    }
+
+    public ArrayList<String> toList (JSONArray data) {
+        ArrayList<String> people = new ArrayList<String>();
+            try {
+                for (int n=0; n<=data.length()-1;n++) {
+                    pID = Integer.valueOf(data.getJSONObject(n).getString("pID"));
+                    String line = "[pID " + data.getJSONObject(n).getString("pID")
+                            + "] " + data.getJSONObject(n).getString("Family")
+                            + ", " + data.getJSONObject(n).getString("First")
+                            + " of " + data.getJSONObject(n).getString("Address1")
+                            + " " + data.getJSONObject(n).getString("Address2")
+                            + " " + data.getJSONObject(n).getString("Address3");
+                    people.add(line);
+                }
+                return people;
+
+            } catch (JSONException e) {
+                // if an exception occurs, code for it in here
+            }
+            return null;
+        }
+
+
     public String MakeRequestString (){
         // Purpose: build a URL string for use with Web compnent
         // Expects: Nothing. Hard coded for this object
