@@ -35,7 +35,7 @@ import java.util.ArrayList;
 
 public class operatorHome_screen02 extends Form implements HandlesEventDispatching {
 
-    // LOOK AT TinyDB
+    // LOOK AT TinyDB ...
     //https://groups.google.com/forum/#!topic/app-inventor-open-source-dev/O1gR1MVOGNY
 
     private Button jobAddButton, jobEditButton, customerAddButton, customerEditButton;
